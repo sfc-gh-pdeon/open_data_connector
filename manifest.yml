@@ -1,0 +1,12 @@
+manifest_version: 1
+artifacts:
+  setup_script: scripts/setup.sql
+  readme: readme.md
+  extension_code: true
+  default_streamlit: code_schema.open_data_connector
+privileges:
+  - EXECUTE TASK:
+      description: "CKAN connector needs to update URLs on a weekly basis and as data is updated."
+configuration:
+  trace_level: OFF
+  log_level: ERROR
