@@ -7,11 +7,11 @@ GRANT USAGE ON SCHEMA code_schema TO APPLICATION ROLE ckan_app_role;
 CREATE STAGE IF NOT EXISTS core.published_extracts encryption = (type = 'SNOWFLAKE_SSE');
 GRANT ALL ON STAGE core.published_extracts TO APPLICATION ROLE ckan_app_role;
 
-CREATE OR REPLACE STREAMLIT code_schema.open_data_connector
+CREATE OR REPLACE STREAMLIT code_schema.CKAN_OPEN_DATA_CONNECTOR
   FROM '/streamlit'
   MAIN_FILE = '/main.py'
 ;
-GRANT USAGE ON STREAMLIT code_schema.open_data_connector TO APPLICATION ROLE ckan_app_role;
+GRANT USAGE ON STREAMLIT code_schema.CKAN_OPEN_DATA_CONNECTOR TO APPLICATION ROLE ckan_app_role;
 
 CREATE TABLE IF NOT EXISTS core.resources (
 owner_org string NOT NULL

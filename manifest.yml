@@ -3,7 +3,7 @@ artifacts:
   setup_script: scripts/setup.sql
   readme: readme.md
   extension_code: true
-  default_streamlit: code_schema.open_data_connector
+  default_streamlit: code_schema.CKAN_OPEN_DATA_CONNECTOR
 privileges:
   - EXECUTE TASK:
       description: "CKAN connector needs to update URLs on a weekly basis and as data is updated."
