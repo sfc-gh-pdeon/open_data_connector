@@ -1,6 +1,8 @@
 import streamlit as st
 from snowflake.snowpark.context import get_active_session
 import util as util
+from cron_descriptor import get_description
+
 session = get_active_session()
 app_name = util.get_app_name()
 
@@ -49,6 +51,25 @@ st.header('Step 1 of 4: Create Tasks')
 st.info('Tasks require a Virtual Warehouse (VWH) to run on a regular basis. Please input the name of a VWH to use for ongoing tasks. This VWH can be a shared resource. An XS VWH is recommended. These tasks automate updates to CKAN as changes occur.')
 
 vwh = st.text_input("Name of VWH", key='vwh')
+col_cron,col_secs,col_mins,col_hour,col_dayMo,col_month,col_dayWeek = st.columns(8)
+
+with col_cron:
+    st.write("CRON")
+with col_secs:
+    col_secs=st.text_input()
+with col_mins:
+    col_mins=st.text_input()
+with col_hour:
+    col_hour=st.text_input()
+with col_dayMo:
+    col_dayMo=st.text_input()
+with col_month:
+    col_month=st.text_input()
+with col_dayWeek:
+    col_dayWeek=st.text_input()
+
+st.write(get_description(f'{col_secs} {col_mins} {col_hour} {col_dayMo} {col_month} {col_dayWeek}'))
+
 if util.is_task_configured():
     st.success('Tasks created', icon='✅')
 elif not vwh:
