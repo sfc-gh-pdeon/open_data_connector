@@ -1,10 +1,13 @@
 //this is intended to capture any updates as they occur on the resources table. i.e. data has been update in the base table
 CREATE OR REPLACE task core.refresh_updated_urls_task
- SCHEDULE = 'USING CRON 0 23 * * * America/Los_Angeles'
+ SCHEDULE = 'USING CRON {1} America/Los_Angeles'
  WAREHOUSE = {0}
  AS
  EXECUTE IMMEDIATE
  $$
+    DECLARE 
+        sql VARCHAR;
+        is_first BOOLEAN;
     BEGIN
         --Get all Databases that we can see so that we can find each tables last altered data. Exclude the app itself.
         SHOW TERSE DATABASES IN ACCOUNT; 

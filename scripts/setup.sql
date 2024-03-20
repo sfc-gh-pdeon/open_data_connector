@@ -82,7 +82,7 @@ def create_function(session, external_access_object, filename, ckan_url):
 $$;
 GRANT USAGE ON PROCEDURE CONFIG.FINALIZE(string, string) to application role ckan_app_role;
 
-CREATE OR REPLACE PROCEDURE CONFIG.create_vwh_objects(vwh string)
+CREATE OR REPLACE PROCEDURE CONFIG.create_vwh_objects(vwh string, cron string)
 returns string
 LANGUAGE PYTHON
 RUNTIME_VERSION = '3.10'
@@ -92,21 +92,21 @@ AS
 $$
 import os
 
-def create_functions(session, external_access_object):
+def create_functions(session, vwh, cron):
     files = ['refresh_urls_task.sql','refresh_urls_onchange.sql']
     for f in files:
-      create_function(session,external_access_object,'/scripts/function_ddls/' + f)
+      create_function(session,vwh, cron,'/scripts/function_ddls/' + f)
     return "VWH Dependent objects complete"
 
-def create_function(session, external_access_object, filename):
+def create_function(session, vwh, cron, filename):
     file = session.file.get_stream(filename)
     create_function_ddl = file.read(-1).decode("utf-8")
-    create_function_ddl = create_function_ddl.format(external_access_object)
+    create_function_ddl = create_function_ddl.format(vwh,cron)
     session.sql("begin " + create_function_ddl + " end;").collect()
     return f'{filename} created'       
 $$;
 
-GRANT USAGE ON PROCEDURE CONFIG.create_vwh_objects(string) to application role ckan_app_role;
+GRANT USAGE ON PROCEDURE CONFIG.create_vwh_objects(string,string) to application role ckan_app_role;
 CREATE OR REPLACE FUNCTION config.add_quotes(object_name string)
 RETURNS STRING
 LANGUAGE SQL

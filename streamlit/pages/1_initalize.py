@@ -40,7 +40,7 @@ def createTasks():
     if 'vwh' in st.session_state:
         vwh = st.session_state.vwh
         try:
-            _ = session.sql(f'call config.create_vwh_objects(\'{vwh}\')').collect()
+            _ = session.sql(f'call config.create_vwh_objects(\'{vwh}\',\'{cron}\')').collect()
             st.session_state.vwh_submitted = True
         except:
             st.error('Task Creation failed. Check the name of your virtual warehouse and that permissions are granted.')
@@ -51,24 +51,23 @@ st.header('Step 1 of 4: Create Tasks')
 st.info('Tasks require a Virtual Warehouse (VWH) to run on a regular basis. Please input the name of a VWH to use for ongoing tasks. This VWH can be a shared resource. An XS VWH is recommended. These tasks automate updates to CKAN as changes occur.')
 
 vwh = st.text_input("Name of VWH", key='vwh')
-col_cron,col_secs,col_mins,col_hour,col_dayMo,col_month,col_dayWeek = st.columns(8)
 
-with col_cron:
-    st.write("CRON")
-with col_secs:
-    col_secs=st.text_input()
-with col_mins:
-    col_mins=st.text_input()
-with col_hour:
-    col_hour=st.text_input()
-with col_dayMo:
-    col_dayMo=st.text_input()
-with col_month:
-    col_month=st.text_input()
-with col_dayWeek:
-    col_dayWeek=st.text_input()
 
-st.write(get_description(f'{col_secs} {col_mins} {col_hour} {col_dayMo} {col_month} {col_dayWeek}'))
+with st.expander("CRON Configuration (Optional)"):
+    col_cron,col_secs,col_mins,col_hour,col_dayMo,col_month,col_dayWeek = st.columns(7)
+    st.info("Data is refreshed to CKAN based on this interval. The default setting is 11PM daily.")
+    with col_mins:
+        col_mins=st.text_input("minutes", value="0", key="mins")
+    with col_hour:
+        col_hour=st.text_input("hours", value="23", key="hour")
+    with col_dayMo:
+        col_dayMo=st.text_input("day of month", value="*", key="day")
+    with col_month:
+        col_month=st.text_input("month", value="*", key="month")
+    with col_dayWeek:
+        col_dayWeek=st.text_input("day of week", value="*", key="dayweek")
+    cron=f'{col_mins} {col_hour} {col_dayMo} {col_month} {col_dayWeek}'
+    st.write('Refresh task runs at: ' + get_description(f'{col_mins} {col_hour} {col_dayMo} {col_month} {col_dayWeek}'))
 
 if util.is_task_configured():
     st.success('Tasks created', icon='✅')
@@ -76,8 +75,7 @@ elif not vwh:
     st.stop()
 
 st.warning('Before creating the tasks, grant access to the application by running the following command in a separate worksheet in Snowsight.')
-st.code(f'''GRANT USAGE,OPERATE ON WAREHOUSE {vwh} TO APPLICATION {app_name};
-GRANT EXECUTE TASK ON ACCOUNT TO APPLICATION {app_name};''')
+st.code(f'''GRANT USAGE,OPERATE ON WAREHOUSE {vwh} TO APPLICATION {app_name};''')
 btnCreateTask = st.button('Create Tasks',on_click=createTasks, type='primary')
  
 if 'vwh_submitted' not in st.session_state or not st.session_state.vwh_submitted:
@@ -96,7 +94,7 @@ if util.is_key_configured():
     if util.is_url_configured():
         if len(ckan_url.strip()) == 0:
             ckan_url = util.get_ckan_url()
-        st.warning("You must enable external access to the CKAN API. Execute the the following code with the ACCOUNTADMIN role or a custom role that has been granted the CREATE INTEGRATION permission for the account. Open a new worksheet in Snowsight to excute the following:")
+        st.warning("You must enable external access to the CKAN API. Execute the the following code with the ACCOUNTADMIN role or a custom role that has been granted the CREATE INTEGRATION permission for the account. Open a new worksheet in Snowsight to execute the following:")
         st.code(f'''        
         CREATE OR REPLACE EXTERNAL ACCESS INTEGRATION ckan_apis_access_integration
         ALLOWED_NETWORK_RULES = ({app_name}.CONFIG.EXTERNAL_ACCESS_RULE)

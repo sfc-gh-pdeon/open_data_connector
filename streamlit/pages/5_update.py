@@ -7,7 +7,7 @@ import time
 session = get_active_session()
 logger = logging.getLogger("python_logger")
 app_name=util.get_app_name()
-ckan_url=util.get
+ckan_url=util.get_ckan_url()
 
 st.header('Updating the Open Data Connector')
 st.info('After upgrading the version, you may need to redploy the tasks and external access funtions if they have changed. You can do so by running the following code in a worksheet. You can re-run this code multiple times.')
