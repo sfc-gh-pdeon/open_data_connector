@@ -24,3 +24,41 @@ try:
 except Exception as ex:
             logger.error(ex)
             st.error(util.error_msg, icon='🚨')
+
+col1,col2 = st.columns(2)
+with col1:
+    btnStartTask = st.button('Start Tasks',key='StartTask',type='primary')
+    if btnStartTask:
+        try:
+            session.sql(f"begin alter task {app_name}.core.refresh_urls_task resume; alter task {app_name}.core.refresh_updated_urls_task resume; end;").collect()
+            st.success('Tasks resumed')
+        except Exception as ex:
+                    logger.error(ex)
+                    st.error(util.error_msg, icon='🚨')
+with col2:                    
+    btnSuspendTask = st.button('Suspend Tasks',key='suspend',type='secondary')
+    if btnSuspendTask:
+        try:
+            session.sql(f"begin alter task {app_name}.core.refresh_urls_task suspend; alter task {app_name}.core.refresh_updated_urls_task suspend; end;").collect()
+            st.success('Tasks suspended')
+        except Exception as ex:
+                    logger.error(ex)
+                    st.error(util.error_msg, icon='🚨')
+
+
+st.info('Streams')
+try:
+    streams = session.sql(f"begin show streams in {app_name}.core; let res RESULTSET := (select \"name\",\"stale\",\"stale_after\",\"invalid_reason\" from table(result_scan(last_query_id()))); return table(res); end;").collect()
+    tde = st.experimental_data_editor(streams,num_rows="fixed",use_container_width=True)
+except Exception as ex:
+            logger.error(ex)
+            st.error(util.error_msg, icon='🚨')            
+
+recreate = st.button('Recreate Stream',key='recreate',help='If the stream is stale, recreate it and republish',type='primary')            
+if recreate:
+        try:
+            session.sql(f"CREATE OR REPLACE STREAM core.resources_stream on table core.resources;").collect()
+            st.success('Stream recreated')
+        except Exception as ex:
+            logger.error(ex)
+            st.error(util.error_msg, icon='🚨')  
