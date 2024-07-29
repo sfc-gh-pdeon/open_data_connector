@@ -51,6 +51,7 @@ CREATE OR REPLACE PROCEDURE CONFIG.register_reference(ref_name STRING, operation
     END;
   $$;
 
+
 GRANT USAGE ON PROCEDURE CONFIG.register_reference(STRING, STRING, STRING)
   TO APPLICATION ROLE ckan_app_role;
 
@@ -198,6 +199,9 @@ BEGIN
       let tname string := tbl.tbl_name;
       let fqtn string := tbl.FQTN;
       //writes a file to an internal stage
+      
+      SYSTEM$LOG_INFO('Unloading file '||:fname||' to internal stage for table '||:fqtn);
+        
       CALL config.unload_to_internal_stage(:ext,:com,:fname,:tname,:fqtn);
     END FOR;
     
@@ -225,8 +229,10 @@ BEGIN
     WHERE r.database_name = RESOURCES.database_name
     AND r.schema_name = RESOURCES.schema_name
     AND r.table_name = RESOURCES.table_name$$;
+    SYSTEM$LOG_INFO('Add file information to file and update resource table: '|| :sql);
     execute immediate(:sql);
 
+    SYSTEM$LOG_INFO('Make API call to CKAN and regenerate presigned URL');
     INSERT INTO core.ckan_log
       SELECT current_timestamp(),rs.package_id
       ,parse_json(config.resource_update(rs.resource_id,rs.extension,rs.presigned_url)):id::string ext_resource_id
@@ -247,6 +253,7 @@ EXCEPTION
                             'SQLCODE', sqlcode,
                             'SQLERRM', sqlerrm,
                             'SQLSTATE', sqlstate);
+    SYSTEM$LOG_ERROR(:err);
     insert into core.ckan_log select localtimestamp(), package_id, resource_id, table_name,:err::string 
     from core.resources;
     SYSTEM$LOG_ERROR(:err::string);

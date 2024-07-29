@@ -1,4 +1,8 @@
 manifest_version: 1
+version:
+  name: CKAN_OPEN_DATA_CONNECTOR
+  label: "v1.1"
+  comment: "Change of Tasks and permission requests"
 artifacts:
   setup_script: scripts/setup.sql
   readme: readme.md
@@ -10,3 +14,28 @@ privileges:
 configuration:
   trace_level: OFF
   log_level: ERROR
+references:
+  - consumer_table:
+      label: "Consumer tables"
+      description: "A table in the consumer account that exists outside the APPLICATION object."
+      privileges:
+        - SELECT
+      object_type: Table
+      multi_valued: true
+      register_callback: config.register_reference
+  - consumer_external_access:
+      label: "Consumer external access integration"
+      description: "An external access integration in the consumer account that exists outside the APPLICATION object."
+      privileges:
+        - USAGE
+      object_type: EXTERNAL ACCESS INTEGRATION
+      register_callback: config.register_reference
+      configuration_callback: config.get_configuration_for_reference
+  - consumer_secret:
+      label: "Consumer secret for CKAN API"
+      description: "A Secret used for authenticating to CKAN"
+      privileges:
+        - USAGE
+      object_type: SECRET
+      register_callback: config.register_reference
+      configuration_callback: config.get_configuration_for_reference

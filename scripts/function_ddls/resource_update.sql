@@ -17,10 +17,12 @@ logger = logging.getLogger("python_logger")
 
 def resource_update(resource_id, extension, presigned_url):
   try:
+    logger.info('Begin API call to update resource')
     token = _snowflake.get_generic_secret_string('cred')
     url = "https://{1}/api/action/resource_update"
     json_options = {{'id':resource_id,'format':extension ,'url':presigned_url, 'clear_upload':'true'}}
     response = session.post(url, headers = {{"X-CKAN-API-Key": token}}, json = json_options)
+    logger.info('End API call to update resource')
     return json.dumps(response.json()['result'])
   except Exception as ex:
     logger.error(ex)

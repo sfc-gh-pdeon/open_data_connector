@@ -6,15 +6,20 @@ CREATE OR REPLACE task core.refresh_urls_task
   EXECUTE IMMEDIATE
  $$
     BEGIN
+        SYSTEM$LOG_INFO('Begin generating new presigned URLs for all resources');
+
         INSERT INTO ckan_log
         SELECT current_timestamp()
         ,rs.package_id
         ,parse_json(config.resource_update(rs.resource_id,rs.extension,rs.presigned_url)):id::string ext_resource_id
         ,rs.table_name,'presigned url updated at CKAN'        
         FROM core.resources rs;
+        
+        SYSTEM$LOG_INFO('End generating new presigned URLs for all resources');
     EXCEPTION
     WHEN OTHER THEN
         let err string := SQLERRM;
+        SYSTEM$LOG_ERROR(:err);
         INSERT INTO ckan_log
         select current_timestamp(),rs.package_id,rs.resource_id,rs.table_name,'presigned url update failed: ' || :err
         FROM core.resources rs;

@@ -17,7 +17,7 @@ st.code(f"""
                 SHOW TASKS LIKE 'REFRESH_UPDATED_URLS_TASK' IN {app_name}.core; 
                 LET res RESULTSET := (select DISTINCT "warehouse" wh, regexp_replace("schedule",'(USING CRON )|(America/Los_Angeles)') sch from table(result_scan(last_query_id()))); 
                 FOR vwh IN res DO
-                    let sql string := 'CALL config.create_vwh_objects(\\'' || vwh.wh || '\\',\\''||vwh.sch||'\\')';        
+                    let sql string := 'CALL {app_name}.config.create_vwh_objects(\\'' || vwh.wh || '\\',\\''||vwh.sch||'\\')';        
                     execute immediate(:sql);
                     CALL {app_name}.CONFIG.FINALIZE('ckan_apis_access_integration','{ckan_url}');
                 END FOR;
