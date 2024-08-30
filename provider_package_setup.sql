@@ -7,6 +7,18 @@ CREATE APPLICATION PACKAGE CKAN_OPEN_DATA_CONNECTOR;
 CREATE OR REPLACE SCHEMA SHARED_CONTENT;
 CREATE OR REPLACE STAGE SHARED_CONTENT.CODE_STAGE FILE_FORMAT = (TYPE = 'CSV' FIELD_DELIMITER = '|' SKIP_HEADER = 1);
 
+--Upload the code assets using SnowSQL
+/*
+PUT file://../OPEN_DATA_CONNECTOR/manifest.yml @CKAN_OPEN_DATA_CONNECTOR.shared_content.CODE_STAGE overwrite=true auto_compress=false;
+PUT file://../OPEN_DATA_CONNECTOR/scripts/setup.sql @CKAN_OPEN_DATA_CONNECTOR.shared_content.CODE_STAGE/scripts overwrite=true auto_compress=false;
+PUT file://../OPEN_DATA_CONNECTOR/readme.md @CKAN_OPEN_DATA_CONNECTOR.shared_content.CODE_STAGE overwrite=true auto_compress=false;
+PUT file://../OPEN_DATA_CONNECTOR/streamlit/environment.yml @CKAN_OPEN_DATA_CONNECTOR.shared_content.CODE_STAGE/streamlit overwrite=true auto_compress=false;
+PUT file://../OPEN_DATA_CONNECTOR/streamlit/main.py @CKAN_OPEN_DATA_CONNECTOR.shared_content.CODE_STAGE/streamlit overwrite=true auto_compress=false;
+PUT file://../OPEN_DATA_CONNECTOR/streamlit/util.py @CKAN_OPEN_DATA_CONNECTOR.shared_content.CODE_STAGE/streamlit overwrite=true auto_compress=false;
+PUT file://../OPEN_DATA_CONNECTOR/streamlit/pages/* @CKAN_OPEN_DATA_CONNECTOR.shared_content.CODE_STAGE/streamlit/pages overwrite=true auto_compress=false;
+PUT file://../OPEN_DATA_CONNECTOR/scripts/function_ddls/* @CKAN_OPEN_DATA_CONNECTOR.shared_content.CODE_STAGE/scripts/function_ddls/ overwrite=true auto_compress=false;
+*/
+
 --For Initial deployment, set the version
 ALTER APPLICATION PACKAGE CKAN_OPEN_DATA_CONNECTOR
   ADD VERSION V1_0 USING '@CKAN_OPEN_DATA_CONNECTOR.shared_content.CODE_STAGE';
