@@ -205,20 +205,7 @@ else:
                 txtFileAlias = st.text_input('File Alias (without extension)', help='This will be the name of the file in CKAN without extension', key='txtFileAlias')            
                 rdoOutputType = st.radio("File Type", options=['csv','json','parquet'], key='rdoOutputType',horizontal=True)
                 rdoCompress = st.radio("Compression",options=populateCompressionOptions(), key='rdoCompress',horizontal=True)
-                
-            col1,col2 = st.columns(2)
-            with col1:
-                btnPublish = st.button("Publish", on_click=updateResource, type='primary',help='Publishes the data set to the portal.')
-            with col2:
-                btnTableRefresh = st.button("Refresh Tables", on_click=loadTables, type='secondary', help='If you have added permissions to a new table, press this button to refresh the list of database tables in the drop down lists.')
 
-#
-# Create tasks
-#
-
-           # st.header('Choose Virtual Warehouse')
-      
-            #vwh = st.text_input("Name of VWH", key='vwh')
             
             with st.expander("CRON Configuration"):
                 col_cron,col_secs,col_mins,col_hour,col_dayMo,col_month,col_dayWeek = st.columns(7)
@@ -236,10 +223,13 @@ else:
             cron=f'{col_mins} {col_hour} {col_dayMo} {col_month} {col_dayWeek}'
             st.write('Refresh task runs at: ' + get_description(f'{col_mins} {col_hour} {col_dayMo} {col_month} {col_dayWeek}'))
 
-            if util.is_task_configured():
-                st.success('Tasks created', icon='✅')
+              
+            col1,col2 = st.columns(2)
+            with col1:
+                btnCreateTask = st.button('Create Tasks',on_click=createTasks, type='primary')
+                btnPublish = st.button("Publish", on_click=updateResource, type='primary',help='Publishes the data set to the portal.')
+            with col2:
+                btnTableRefresh = st.button("Refresh Tables", on_click=loadTables, type='secondary', help='If you have added permissions to a new table, press this button to refresh the list of database tables in the drop down lists.')
 
-            st.header('Create Refresh Task.')
-            btnCreateTask = st.button('Create Tasks',on_click=createTasks, type='primary')
 
 
