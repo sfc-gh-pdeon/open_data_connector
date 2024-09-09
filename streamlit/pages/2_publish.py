@@ -5,6 +5,7 @@ import util as util
 from datetime import datetime
 import logging
 import time
+from cron_descriptor import get_description
 
 session = get_active_session()
 logger = logging.getLogger("python_logger")
@@ -165,6 +166,19 @@ def populateCompressionOptions():
     else:
         return ['gzip','bz2','brotli','zstd','deflate','raw_deflate','None']
 
+#
+# add createtasks
+#
+
+def createTasks():
+
+        try:
+            _ = session.sql(f'call config.create_vwh_objects_tname(\'{ddlTableToPublish}\',\'{cron}\')').collect()
+        except:
+            st.error('Task Creation failed. Check that permissions are granted.')
+            st.error(util.error_msg)
+
+
 st.header('Publish Resources')
 st.info('Use the drop downs to select the Package and Resources to map a table to.')
 st.warning('You must already have created the package and resource in the Open Data.')
@@ -197,3 +211,35 @@ else:
                 btnPublish = st.button("Publish", on_click=updateResource, type='primary',help='Publishes the data set to the portal.')
             with col2:
                 btnTableRefresh = st.button("Refresh Tables", on_click=loadTables, type='secondary', help='If you have added permissions to a new table, press this button to refresh the list of database tables in the drop down lists.')
+
+#
+# Create tasks
+#
+
+           # st.header('Choose Virtual Warehouse')
+      
+            #vwh = st.text_input("Name of VWH", key='vwh')
+            
+            with st.expander("CRON Configuration"):
+                col_cron,col_secs,col_mins,col_hour,col_dayMo,col_month,col_dayWeek = st.columns(7)
+                st.info("Data is refreshed to CKAN based on this interval. The default setting is 11PM daily.")
+            with col_mins:
+                col_mins=st.text_input("minutes", value="0", key="mins")
+            with col_hour:
+                col_hour=st.text_input("hours", value="23", key="hour")
+            with col_dayMo:
+                col_dayMo=st.text_input("day of month", value="*", key="day")
+            with col_month:
+                col_month=st.text_input("month", value="*", key="month")
+            with col_dayWeek:
+                col_dayWeek=st.text_input("day of week", value="*", key="dayweek")
+            cron=f'{col_mins} {col_hour} {col_dayMo} {col_month} {col_dayWeek}'
+            st.write('Refresh task runs at: ' + get_description(f'{col_mins} {col_hour} {col_dayMo} {col_month} {col_dayWeek}'))
+
+            if util.is_task_configured():
+                st.success('Tasks created', icon='✅')
+
+            st.header('Create Refresh Task.')
+            btnCreateTask = st.button('Create Tasks',on_click=createTasks, type='primary')
+
+
