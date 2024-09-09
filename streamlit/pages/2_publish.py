@@ -117,6 +117,7 @@ def updateResource():
             else:
                 session.sql('COMMIT TRANSACTION')
                 st.success('Saved!', icon="✅")
+                createTasks()
             
     except Exception as ex:
         logger.error(ex)
