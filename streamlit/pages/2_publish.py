@@ -117,7 +117,7 @@ def updateResource():
             else:
                 session.sql('COMMIT TRANSACTION')
                 st.success('Saved!', icon="✅")
-                createTasks()
+                createTasks
             
     except Exception as ex:
         logger.error(ex)
@@ -227,7 +227,6 @@ else:
               
             col1,col2 = st.columns(2)
             with col1:
-                btnCreateTask = st.button('Create Tasks',on_click=createTasks, type='primary')
                 btnPublish = st.button("Publish", on_click=updateResource, type='primary',help='Publishes the data set to the portal.')
             with col2:
                 btnTableRefresh = st.button("Refresh Tables", on_click=loadTables, type='secondary', help='If you have added permissions to a new table, press this button to refresh the list of database tables in the drop down lists.')
