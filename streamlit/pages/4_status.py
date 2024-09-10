@@ -30,7 +30,7 @@ with col1:
     btnStartTask = st.button('Start Tasks',key='StartTask',type='primary')
     if btnStartTask:
         try:
-            session.sql("
+            session.sql(f"""
              BEGIN 
                show tasks in {app_name}.core;
                LET c1 cursor for (SELECT \'{app_name}.core.\' || \"name\" as tname FROM TABLE(RESULT_SCAN(LAST_QUERY_ID())));
@@ -39,7 +39,7 @@ with col1:
                   let taskname varchar := arow.tname;
                   alter task identifier(:taskname) resume; 
                END FOR; close c1;
-               END;").collect()
+               END;""").collect()
             st.success('Tasks resumed')
         except Exception as ex:
                     logger.error(ex)
@@ -48,7 +48,7 @@ with col2:
     btnSuspendTask = st.button('Suspend Tasks',key='suspend',type='secondary')
     if btnSuspendTask:
         try:
-            session.sql("
+            session.sql(f"""
              BEGIN 
                show tasks in {app_name}.core;
                LET c1 cursor for (SELECT \'{app_name}.core.\' || \"name\" as tname FROM TABLE(RESULT_SCAN(LAST_QUERY_ID())));
@@ -57,7 +57,7 @@ with col2:
                   let taskname varchar := arow.tname;
                   alter task identifier(:taskname) suspend; 
                END FOR; close c1;
-               END;").collect()
+               END;""").collect()
             st.success('Tasks suspended')
         except Exception as ex:
                     logger.error(ex)
