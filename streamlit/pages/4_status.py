@@ -32,7 +32,7 @@ with col1:
         try:
             session.sql(f"
              BEGIN 
-               show tasks;
+               show tasks in {app_name}.core;
                LET c1 cursor for (SELECT '{app_name}.core.' || "name" as TNAME FROM TABLE(RESULT_SCAN(LAST_QUERY_ID())));
                open c1;
                FOR arow in c1 DO
@@ -51,7 +51,7 @@ with col2:
         try:
             session.sql(f"
              BEGIN 
-               show tasks;
+               show tasks in {app_name}.core;
                LET c1 cursor for (SELECT '{app_name}.core.' || "name" as TNAME FROM TABLE(RESULT_SCAN(LAST_QUERY_ID())));
                open c1;
                FOR arow in c1 DO
