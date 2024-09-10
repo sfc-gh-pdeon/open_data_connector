@@ -205,7 +205,7 @@ BEGIN
 END;
 GRANT USAGE ON PROCEDURE CONFIG.unload_to_internal_stage(string,string,string,string,string) to application role ckan_app_role;
 
-CREATE OR REPLACE PROCEDURE CONFIG.SP_UPDATE_RESOURCES()
+CREATE OR REPLACE PROCEDURE CONFIG.SP_UPDATE_RESOURCES(tname varchar)
 RETURNS STRING
 LANGUAGE SQL
 EXECUTE AS OWNER
@@ -218,7 +218,8 @@ DECLARE
                                 ,file_name
                                 ,extension
                                 ,compressed
-                            from core.resources_stream);
+                            from core.resources_stream
+                            where table_name = :tname);
                             
 BEGIN
     FOR tbl IN tables DO
@@ -289,4 +290,4 @@ EXCEPTION
     return 'FAILURE';
 END;
 
-GRANT USAGE ON PROCEDURE CONFIG.SP_UPDATE_RESOURCES() to application role ckan_app_role;
+GRANT USAGE ON PROCEDURE CONFIG.SP_UPDATE_RESOURCES(string) to application role ckan_app_role;
