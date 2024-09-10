@@ -38,8 +38,7 @@ with col1:
                FOR arow in c1 DO
                   let taskname varchar := arow.tname;
                   alter task identifier(:taskname) resume; 
-               END FOR;
-               close c1;
+               END FOR; close c1;
                END;").collect()
             st.success('Tasks resumed')
         except Exception as ex:
@@ -57,8 +56,7 @@ with col2:
                FOR arow in c1 DO
                   let taskname varchar := arow.tname;
                   alter task identifier(:taskname) suspend; 
-               END FOR;
-               close c1;
+               END FOR; close c1;
                END;").collect()
             st.success('Tasks suspended')
         except Exception as ex:
