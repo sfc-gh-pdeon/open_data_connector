@@ -37,7 +37,7 @@ with col1:
                open c1;
                FOR arow in c1 DO
                   let taskname varchar := arow.tname;
-                  alter task identifier(:taskname) suspend; 
+                  alter task identifier(:taskname) resume; 
                END FOR;
                close c1;
                END;").collect()
