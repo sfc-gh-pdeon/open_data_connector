@@ -30,7 +30,7 @@ with col1:
     btnStartTask = st.button('Start Tasks',key='StartTask',type='primary')
     if btnStartTask:
         try:
-            session.sql(f"
+            session.sql("
              BEGIN 
                show tasks in {app_name}.core;
                LET c1 cursor for (SELECT \'{app_name}.core.\' || \"name\" as tname FROM TABLE(RESULT_SCAN(LAST_QUERY_ID())));
@@ -48,7 +48,7 @@ with col2:
     btnSuspendTask = st.button('Suspend Tasks',key='suspend',type='secondary')
     if btnSuspendTask:
         try:
-            session.sql(f"
+            session.sql("
              BEGIN 
                show tasks in {app_name}.core;
                LET c1 cursor for (SELECT \'{app_name}.core.\' || \"name\" as tname FROM TABLE(RESULT_SCAN(LAST_QUERY_ID())));
