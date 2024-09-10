@@ -22,7 +22,7 @@ CREATE OR REPLACE task core.{0}_refresh_updated_urls_task
                 sql := 'SELECT LAST_ALTERED,table_catalog db_name, table_Schema schema_name, table_name FROM '||t.db_name||'.INFORMATION_SCHEMA."TABLES" WHERE schema_name <> \'INFORMATION_SCHEMA\' and table_name = \'{0}\' ';
                 is_first := false;
             ELSE
-                sql := sql || ' UNION ALL SELECT LAST_ALTERED,table_catalog db_name, table_Schema schema_name, table_name FROM '||t.db_name||'.INFORMATION_SCHEMA."TABLES" WHERE schema_name <> \'INFORMATION_SCHEMA\' and table_name = '\{0}\' ';
+                sql := sql || ' UNION ALL SELECT LAST_ALTERED,table_catalog db_name, table_Schema schema_name, table_name FROM '||t.db_name||'.INFORMATION_SCHEMA."TABLES" WHERE schema_name <> \'INFORMATION_SCHEMA\' and table_name = \'{0}\' ';
             END IF;
         END FOR;
         SYSTEM$LOG_INFO('End getting all tables that have been updated. Resulting SQL: ' || :sql);
