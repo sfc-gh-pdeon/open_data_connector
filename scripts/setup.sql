@@ -273,7 +273,8 @@ BEGIN
 
     insert into core.ckan_log 
     select current_timestamp(),package_id,resource_id,table_name,'SP_UPDATE_RESOURCES COMPLETE' 
-    from core.resources;
+    from core.resources
+      where table_name = :tname;
 
     return 'SUCCESS';
     
