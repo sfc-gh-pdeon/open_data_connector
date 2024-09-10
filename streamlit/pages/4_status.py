@@ -33,7 +33,7 @@ with col1:
             session.sql(f"
              BEGIN 
                show tasks in {app_name}.core;
-               LET c1 cursor for (SELECT '{app_name}.core.' || \"name\" as tname FROM TABLE(RESULT_SCAN(LAST_QUERY_ID())));
+               LET c1 cursor for (SELECT \'{app_name}.core.\' || \"name\" as tname FROM TABLE(RESULT_SCAN(LAST_QUERY_ID())));
                open c1;
                FOR arow in c1 DO
                   let taskname varchar := arow.tname;
@@ -51,7 +51,7 @@ with col2:
             session.sql(f"
              BEGIN 
                show tasks in {app_name}.core;
-               LET c1 cursor for (SELECT '{app_name}.core.' || \"name\" as tname FROM TABLE(RESULT_SCAN(LAST_QUERY_ID())));
+               LET c1 cursor for (SELECT \'{app_name}.core.\' || \"name\" as tname FROM TABLE(RESULT_SCAN(LAST_QUERY_ID())));
                open c1;
                FOR arow in c1 DO
                   let taskname varchar := arow.tname;
