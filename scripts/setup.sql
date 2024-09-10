@@ -205,7 +205,7 @@ BEGIN
 END;
 GRANT USAGE ON PROCEDURE CONFIG.unload_to_internal_stage(string,string,string,string,string) to application role ckan_app_role;
 
-CREATE OR REPLACE PROCEDURE CONFIG.SP_UPDATE_RESOURCES(tname varchar)
+CREATE OR REPLACE PROCEDURE CONFIG.SP_UPDATE_RESOURCES(tname string)
 RETURNS STRING
 LANGUAGE SQL
 EXECUTE AS OWNER
