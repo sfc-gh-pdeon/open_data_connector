@@ -44,7 +44,7 @@ CREATE OR REPLACE task core.{0}_refresh_updated_urls_task
         execute immediate :sql;
        
         --Unload all files that are in the resouces_Stream and publish to CKAN
-        CALL CONFIG.SP_UPDATE_RESOURCES();
+        CALL CONFIG.SP_UPDATE_RESOURCES(\'{0}\');
     EXCEPTION
     WHEN OTHER THEN
         let err string := SQLERRM;
