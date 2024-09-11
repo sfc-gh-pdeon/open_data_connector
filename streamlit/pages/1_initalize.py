@@ -118,6 +118,7 @@ if util.is_key_configured():
             st.code(f"""        
     GRANT USAGE,OPERATE ON WAREHOUSE compute_wh TO APPLICATION {app_name};
     GRANT EXECUTE TASK ON ACCOUNT TO APPLICATION {app_name};
+    GRANT EXECUTE MANAGED TASK ON ACCOUNT TO APPLICATION {app_name};
 
     CREATE OR REPLACE EXTERNAL ACCESS INTEGRATION ckan_apis_access_integration
     ALLOWED_NETWORK_RULES = ({app_name}.CONFIG.EXTERNAL_ACCESS_RULE)
